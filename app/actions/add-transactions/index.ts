@@ -6,7 +6,7 @@ import { Prisma } from "@prisma/client";
 import { addTransactionSchema } from "./schema";
 import { revalidatePath } from "next/cache";
 
-export const addTransaction = async (
+export const UpsertTransaction = async (
   params: Omit<Prisma.TransactionCreateInput, "userId">,
 ) => {
   addTransactionSchema.parse(params);
@@ -14,8 +14,18 @@ export const addTransaction = async (
   if (!userId) {
     throw new Error("User not authenticated");
   }
-  await db.transaction.create({
-    data: { ...params, userId },
+  await db.transaction.upsert({
+    where: {
+      id: params.id,
+    },
+    update: {
+      ...params,
+      userId,
+    },
+    create: {
+      ...params,
+      userId,
+    },
   });
   revalidatePath("/transactions");
 };
