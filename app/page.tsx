@@ -2,8 +2,8 @@ import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-export default function Home() {
-  const { userId } = auth();
+const Home = async () => {
+  const { userId } = await auth();
   if (!userId) {
     redirect("/login");
   }
@@ -12,4 +12,6 @@ export default function Home() {
       <UserButton showName />
     </div>
   );
-}
+};
+
+export default Home;

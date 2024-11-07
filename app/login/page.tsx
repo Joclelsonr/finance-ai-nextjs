@@ -5,8 +5,8 @@ import { SignInButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-const LoginPage = () => {
-  const { userId } = auth();
+const LoginPage = async () => {
+  const { userId } = await auth();
 
   if (userId) {
     redirect("/");
@@ -24,7 +24,7 @@ const LoginPage = () => {
           className="mb-8"
         />
         <h1 className="mb-3 text-4xl font-bold">Bem-vindo</h1>
-        <p className="text-muted-foreground mb-8">
+        <p className="mb-8 text-muted-foreground">
           A Finance AI é uma plataforma de gestão financeira que utiliza IA para
           monitorar suas movimentações, e oferecer insights personalizados,
           facilitando o controle do seu orçamento.
