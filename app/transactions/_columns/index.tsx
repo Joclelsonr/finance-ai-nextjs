@@ -3,7 +3,30 @@
 import { Transaction, TransactionType } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "../../components/ui/badge";
-import { CircleIcon } from "lucide-react";
+import { CircleIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { Button } from "@/app/components/ui/button";
+
+export const TRANSACTION_CATEGORY_LABELS = {
+  EDUCATION: "Educação",
+  ENTERTAINMENT: "Entretenimento",
+  FOOD: "Alimentação",
+  HEALTH: "Saúde",
+  HOUSING: "Moradia",
+  OTHER: "Outros",
+  SALARY: "Salário",
+  TRANSPORTATION: "Transporte",
+  UTILITY: "Utilidades",
+};
+
+export const TRANSACTION_PAYMENT_LABELS = {
+  BANK_TRANSFER: "Transferência bancária",
+  BANK_SLIP: "Boleto Bancário",
+  CASH: "Dinheiro",
+  CREDIT_CARD: "Cartão de crédito",
+  DEBIT_CARD: "Cartão de débito",
+  OTHER: "Outros",
+  PIX: "Pix",
+};
 
 export const TransactionColumns: ColumnDef<Transaction>[] = [
   {
@@ -41,21 +64,46 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "category",
     header: "Categoria",
+    cell: ({ row: { original: transaction } }) =>
+      TRANSACTION_CATEGORY_LABELS[transaction.category],
   },
   {
     accessorKey: "paymentMethod",
     header: "Método de pagamento",
+    cell: ({ row: { original: transaction } }) =>
+      TRANSACTION_PAYMENT_LABELS[transaction.paymentMethod],
   },
   {
     accessorKey: "date",
     header: "Data",
+    cell: ({ row: { original: transaction } }) =>
+      new Date(transaction.date).toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }),
   },
   {
     accessorKey: "amount",
     header: "Valor",
+    cell: ({ row: { original: transaction } }) =>
+      new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(Number(transaction.amount)),
   },
   {
     accessorKey: "actions",
-    header: "",
+    header: "Ações",
+    cell: () => (
+      <div className="space-x-1">
+        <Button variant="ghost" size="icon" className="text-muted-foreground">
+          <PencilIcon />
+        </Button>
+        <Button variant="ghost" size="icon" className="text-muted-foreground">
+          <Trash2Icon />
+        </Button>
+      </div>
+    ),
   },
 ];
