@@ -9,22 +9,17 @@ import { revalidatePath } from "next/cache";
 export const UpsertTransaction = async (
   params: Omit<Prisma.TransactionCreateInput, "userId">,
 ) => {
-  addTransactionSchema.parse(params);
   const { userId } = auth();
   if (!userId) {
     throw new Error("User not authenticated");
   }
+
+  addTransactionSchema.parse(params);
   await db.transaction.upsert({
+    update: { ...params, userId },
+    create: { ...params, userId },
     where: {
-      id: params.id,
-    },
-    update: {
-      ...params,
-      userId,
-    },
-    create: {
-      ...params,
-      userId,
+      id: params?.id ?? "",
     },
   });
   revalidatePath("/transactions");
