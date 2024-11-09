@@ -66,7 +66,7 @@ const getDashboard = async (month: string) => {
   }));
 
   const lastTransactions = await db.transaction.findMany({
-    where: { ...where },
+    where,
     orderBy: { date: "desc" },
     take: 10,
   });
