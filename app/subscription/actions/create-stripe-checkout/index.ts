@@ -29,7 +29,6 @@ export const createStripeCheckout = async () => {
         quantity: 1,
       },
     ],
-    customer_email: userId,
   });
 
   return { sessionId: checkoutSession.id };

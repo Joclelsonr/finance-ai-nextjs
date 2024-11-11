@@ -1,15 +1,19 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import Navbar from "../components/navbar";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader } from "../components/ui/card";
 import { CheckIcon, XIcon } from "lucide-react";
 import AcquirePlanButton from "./_components/acquire-plan-button";
+import { Badge } from "../components/ui/badge";
 
 const SubscriptionPage = async () => {
   const { userId } = await auth();
   if (!userId) {
     redirect("/login");
   }
+  const user = await clerkClient().users.getUser(userId);
+  const isPremium = user.publicMetadata.subscriptionPlan === "premium";
+
   return (
     <>
       <Navbar />
@@ -34,14 +38,19 @@ const SubscriptionPage = async () => {
                 <p>Apenas 10 transações por mês (7/10)</p>
               </div>
               <div className="flex items-center gap-2">
-                <XIcon />
+                <XIcon className="text-destructive" />
                 <p>Relatórios por IA</p>
               </div>
             </CardContent>
           </Card>
 
           <Card className="w-[450px]">
-            <CardHeader className="border-b border-solid py-8">
+            <CardHeader className="relative border-b border-solid py-8">
+              {isPremium && (
+                <Badge className="absolute left-4 top-11 bg-primary/10 text-primary">
+                  Ativo
+                </Badge>
+              )}
               <h2 className="text-center text-2xl font-semibold">
                 Plano Premium
               </h2>
