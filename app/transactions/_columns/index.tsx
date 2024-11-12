@@ -3,13 +3,13 @@
 import { Transaction, TransactionType } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "../../components/ui/badge";
-import { CircleIcon, Trash2Icon } from "lucide-react";
-import { Button } from "@/app/components/ui/button";
+import { CircleIcon } from "lucide-react";
 import {
   TRANSACTION_CATEGORY_LABELS,
   TRANSACTION_PAYMENT_LABELS,
 } from "@/app/constants/transactions";
 import EditTransactionButton from "../_components/edit-transaction-button";
+import DeleteTransactionButton from "../_components/delete-transaction-button";
 
 export const TransactionColumns: ColumnDef<Transaction>[] = [
   {
@@ -81,9 +81,7 @@ export const TransactionColumns: ColumnDef<Transaction>[] = [
     cell: ({ row: { original: transaction } }) => (
       <div className="space-x-1">
         <EditTransactionButton transaction={transaction} />
-        <Button variant="ghost" size="icon" className="text-muted-foreground">
-          <Trash2Icon />
-        </Button>
+        <DeleteTransactionButton transactionId={transaction.id} />
       </div>
     ),
   },
