@@ -6,14 +6,13 @@ import { TRANSACTION_PAYMENT_ICONS } from "@/app/constants/transactions";
 import { Transaction, TransactionType } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 interface LastTransactionsProps {
   lastTransactions: Transaction[];
 }
 
 const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
-  const getPricecolor = (transaction: Transaction) => {
+  const getAmountColor = (transaction: Transaction) => {
     if (transaction.type === TransactionType.EXPENSE) {
       return "text-red-500";
     }
@@ -21,6 +20,12 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
       return "text-primary";
     }
     return "text-white";
+  };
+  const getAmountPrefix = (transaction: Transaction) => {
+    if (transaction.type === TransactionType.DEPOSIT) {
+      return "+";
+    }
+    return "-";
   };
 
   return (
@@ -38,9 +43,9 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
             className="flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-white p-2 opacity-[3%]">
+              <div className="rounded-lg bg-white bg-opacity-[3%] p-2 text-white">
                 <Image
-                  src={TRANSACTION_PAYMENT_ICONS[transaction.paymentMethod]}
+                  src={`/${TRANSACTION_PAYMENT_ICONS[transaction.paymentMethod]}`}
                   width={20}
                   height={20}
                   alt="icone"
@@ -57,8 +62,8 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
                 </p>
               </div>
             </div>
-            <p className={`text-sm font-bold ${getPricecolor(transaction)}`}>
-              {transaction.type === TransactionType.EXPENSE ? "-" : "+"}
+            <p className={`text-sm font-bold ${getAmountColor(transaction)}`}>
+              {getAmountPrefix(transaction)}
               {formatCurrency(Number(transaction.amount))}
             </p>
           </div>
