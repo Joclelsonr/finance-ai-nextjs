@@ -35,7 +35,11 @@ const TransactionsPage = async () => {
           />
         </div>
         <ScrollArea>
-          <DataTable columns={TransactionColumns} data={transactions} />
+          <DataTable
+            columns={TransactionColumns}
+            // data={JSON.stringify(transactions)}
+            data={transactions}
+          />
         </ScrollArea>
       </div>
     </>
