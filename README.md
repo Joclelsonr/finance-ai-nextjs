@@ -139,4 +139,4 @@ export const config = {
 <br />
 <hr />
 
-Sinta-se à vontade para contribuir ou relatar problemas na seção de [issues](https://github.com/Joclelsonr/nextjs-convit3-digital/issues).
+Sinta-se à vontade para contribuir ou relatar problemas na seção de [issues](https://github.com/Joclelsonr/finance-ai-nextjs/issues).
