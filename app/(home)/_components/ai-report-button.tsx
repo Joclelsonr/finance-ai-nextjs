@@ -1,5 +1,9 @@
 "use client";
 
+import { useRef, useState } from "react";
+import Link from "next/link";
+import { BotIcon, Loader2Icon } from "lucide-react";
+import { ScrollArea } from "@/app/components/ui/scroll-area";
 import { Button } from "@/app/components/ui/button";
 import {
   Dialog,
@@ -11,12 +15,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/app/components/ui/dialog";
-import { BotIcon, Loader2Icon } from "lucide-react";
-import generateAiReport from "../_actions/generate-ai-report";
-import { useState } from "react";
-import { ScrollArea } from "@/app/components/ui/scroll-area";
 import Markdown from "react-markdown";
-import Link from "next/link";
+import generatePDF, { Margin } from "react-to-pdf";
+import { IPdfOptions } from "@/app/types";
+import generateAiReport from "../_actions/generate-ai-report";
 
 interface AiReportButtonProps {
   hasPremiumPlan: boolean;
@@ -24,14 +26,25 @@ interface AiReportButtonProps {
 }
 
 const AiReportButton = ({ hasPremiumPlan, month }: AiReportButtonProps) => {
-  const [report, serReport] = useState<string | null>();
+  const [report, setReport] = useState<string | null>();
   const [isLoading, setIsLoading] = useState(false);
+  const targetRef = useRef<HTMLDivElement>(null);
+
+  const options: IPdfOptions = {
+    method: "open",
+    filename: "report.pdf",
+    page: {
+      margin: Margin.MEDIUM,
+      format: "A4",
+      orientation: "portrait",
+    },
+  };
 
   const handleGenerateReport = async () => {
     try {
       setIsLoading(true);
       const aiReport = await generateAiReport({ month });
-      serReport(aiReport);
+      setReport(aiReport);
     } catch (error) {
       console.log(error);
     } finally {
@@ -43,7 +56,7 @@ const AiReportButton = ({ hasPremiumPlan, month }: AiReportButtonProps) => {
     <Dialog
       onOpenChange={(open) => {
         if (!open) {
-          serReport(null);
+          setReport(null);
         }
       }}
     >
@@ -64,16 +77,26 @@ const AiReportButton = ({ hasPremiumPlan, month }: AiReportButtonProps) => {
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="prose max-h-[450px] prose-h3:text-white prose-h4:text-white prose-strong:text-white">
-              <Markdown>{report}</Markdown>
+              <div ref={targetRef}>
+                <Markdown>{report}</Markdown>
+              </div>
             </ScrollArea>
             <DialogFooter>
               <DialogClose>
                 <Button variant="ghost">Cancelar</Button>
               </DialogClose>
-              <Button onClick={handleGenerateReport} disabled={isLoading}>
-                {isLoading && <Loader2Icon className="animate-spin" />}
-                Gerar Relatório
-              </Button>
+              {report ? (
+                <Button
+                  onClick={() => generatePDF(() => targetRef.current, options)}
+                >
+                  Baixar Relatório
+                </Button>
+              ) : (
+                <Button onClick={handleGenerateReport} disabled={isLoading}>
+                  {isLoading && <Loader2Icon className="animate-spin" />}
+                  Gerar Relatório
+                </Button>
+              )}
             </DialogFooter>
           </>
         ) : (
@@ -98,5 +121,4 @@ const AiReportButton = ({ hasPremiumPlan, month }: AiReportButtonProps) => {
     </Dialog>
   );
 };
-
 export default AiReportButton;
