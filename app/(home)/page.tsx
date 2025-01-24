@@ -1,9 +1,9 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { isMatch } from "date-fns";
 import Navbar from "../components/navbar";
 import SummaryCards from "./_components/summary-cards";
 import TimeSelect from "./_components/time-select";
-import { isMatch } from "date-fns";
 import TransactionPieChart from "./_components/transaction-pie-chart";
 import getDashboard from "../_data/get-dashboard";
 import ExpensesPerCategory from "./_components/expenses-per-category";
@@ -24,14 +24,17 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
   }
 
   const monthIsValid = !month || !isMatch(month, "MM");
-  const currentMonth = new Date();
+  const currentMonth = new Date().getMonth();
   if (monthIsValid) {
-    redirect(`?month=${currentMonth.getMonth() + 1}`);
+    redirect(
+      `?month=${currentMonth < 10 ? `0${currentMonth + 1}` : currentMonth + 1}`,
+    );
   }
 
   const dataDashboard = await getDashboard(month);
   const userCanAddTransactions = await canUserAddTransaction();
-  const user = await clerkClient().users.getUser(userId);
+  const user = await clerkClient().users.getUser(userId as string);
+  const userPlan = user.publicMetadata.subscriptionPlan;
 
   return (
     <>
@@ -42,9 +45,7 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
           <div className="flex items-center gap-3">
             <AiReportButton
               month={month}
-              hasPremiumPlan={
-                user.publicMetadata.subscriptionPlan === "premium"
-              }
+              hasPremiumPlan={userPlan === "premium"}
             />
             <TimeSelect />
           </div>

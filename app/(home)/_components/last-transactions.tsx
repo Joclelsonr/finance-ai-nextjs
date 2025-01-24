@@ -1,11 +1,11 @@
-import { formatCurrency } from "@/app/_utils/currency";
+import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/app/components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
 import { ScrollArea } from "@/app/components/ui/scroll-area";
+import { formatCurrency } from "@/app/_utils/currency";
 import { TRANSACTION_PAYMENT_ICONS } from "@/app/constants/transactions";
 import { Transaction, TransactionType } from "@prisma/client";
-import Image from "next/image";
-import Link from "next/link";
 
 interface LastTransactionsProps {
   lastTransactions: Transaction[];
@@ -37,6 +37,13 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
         </Button>
       </CardHeader>
       <CardContent className="space-y-6">
+        {lastTransactions.length === 0 && (
+          <div className="flex h-full items-center justify-center">
+            <p className="text-sm text-muted-foreground">
+              Nenhuma transação encontrada no mês atual.
+            </p>
+          </div>
+        )}
         {lastTransactions.map((transaction) => (
           <div
             key={transaction.id}

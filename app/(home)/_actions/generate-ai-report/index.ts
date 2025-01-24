@@ -13,7 +13,7 @@ const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
     throw new Error("Unauthorized");
   }
   const user = await clerkClient().users.getUser(userId);
-  const hasPremiumPlan = user.publicMetadata.subsscriptionPlan === "premium";
+  const hasPremiumPlan = user.publicMetadata.subscriptionPlan === "premium";
   if (!hasPremiumPlan) {
     throw new Error("User need a premium plan to generate a report");
   }
@@ -21,11 +21,13 @@ const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
   const openai = new OpenAi({
     apiKey: process.env.OPENAI_API_KEY,
   });
+
+  const currentDate = new Date();
   const transactions = await db.transaction.findMany({
     where: {
       date: {
-        gte: new Date(`2024-${month}-01`),
-        lte: new Date(`2024-${month}-31`),
+        gte: new Date(`${currentDate.getFullYear()}-${month}-01`),
+        lte: new Date(`${currentDate.getFullYear()}-${month}-31`),
       },
     },
   });

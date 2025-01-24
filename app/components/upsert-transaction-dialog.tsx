@@ -70,16 +70,20 @@ type FormSchema = z.infer<typeof formSchema>;
 
 interface UpsertTransactionDialogProps {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
   transactionId?: string;
   defaultValues?: FormSchema;
+  isLoading?: boolean;
+  setIsLoading?: (isLoading: boolean) => void;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
 const UpsertTransactionDialog = ({
   isOpen,
-  setIsOpen,
   defaultValues,
   transactionId,
+  isLoading,
+  setIsLoading,
+  setIsOpen,
 }: UpsertTransactionDialogProps) => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -93,11 +97,13 @@ const UpsertTransactionDialog = ({
   });
 
   const onSubmit = async (data: FormSchema) => {
+    setIsLoading?.(true);
     try {
       await UpsertTransaction({
         ...data,
         id: transactionId,
       });
+      setIsLoading?.(false);
       setIsOpen(false);
       form.reset();
     } catch (error) {
@@ -258,7 +264,9 @@ const UpsertTransactionDialog = ({
                 </Button>
               </DialogClose>
               <Button type="submit">
-                {isUpdate ? "Atualizar" : "Adicionar"}{" "}
+                {isUpdate
+                  ? "Atualizar"
+                  : `${isLoading ? "Adicionando..." : "Adicionar"}`}
               </Button>
             </DialogFooter>
           </form>

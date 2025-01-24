@@ -9,18 +9,19 @@ const getDashboard = async (month: string) => {
     throw new Error("User not authenticated");
   }
 
+  const currentDate = new Date();
   const where = {
     userId,
     date: {
-      gte: new Date(`2024-${month}-01`),
-      lt: new Date(`2024-${month}-31`),
+      gte: new Date(`${currentDate.getFullYear()}-${month}-01`),
+      lt: new Date(`${currentDate.getFullYear()}-${month}-31`),
     },
   };
 
   const depositsTotal = Number(
     (
       await db.transaction.aggregate({
-        where: { ...where, type: "DEPOSIT" },
+        where: { ...where, type: TransactionType.DEPOSIT },
         _sum: { amount: true },
       })
     )._sum?.amount,
@@ -28,7 +29,7 @@ const getDashboard = async (month: string) => {
   const investimentsTotal = Number(
     (
       await db.transaction.aggregate({
-        where: { ...where, type: "INVESTMENT" },
+        where: { ...where, type: TransactionType.INVESTMENT },
         _sum: { amount: true },
       })
     )._sum?.amount,
@@ -36,7 +37,7 @@ const getDashboard = async (month: string) => {
   const expenseTotal = Number(
     (
       await db.transaction.aggregate({
-        where: { ...where, type: "EXPENSE" },
+        where: { ...where, type: TransactionType.EXPENSE },
         _sum: { amount: true },
       })
     )._sum?.amount,

@@ -19,6 +19,7 @@ const AddTransactionButton = ({
   userCanAddTransactions,
 }: AddTransactionButtonProps) => {
   const [dialogIsOpen, setDialogIsIoen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <>
@@ -42,7 +43,9 @@ const AddTransactionButton = ({
       </TooltipProvider>
       <UpsertTransactionDialog
         isOpen={dialogIsOpen}
+        isLoading={isLoading}
         setIsOpen={setDialogIsIoen}
+        setIsLoading={setIsLoading}
       />
     </>
   );

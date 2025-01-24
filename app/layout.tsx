@@ -12,7 +12,7 @@ const mulish = Mulish({
 
 export const metadata: Metadata = {
   title: "Finance AI",
-  description: "App de finanças com IA",
+  description: "App de finanças com relatórios de IA",
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body className={`${mulish.className} dark antialiased`}>
         <ClerkProvider
           appearance={{
